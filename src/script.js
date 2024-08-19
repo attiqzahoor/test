@@ -33,23 +33,13 @@ captureButton.addEventListener('click', () => {
     // Draw the current video frame to the canvas
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // Convert the canvas image to grayscale for better OCR accuracy
-    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-    const grayscaleData = new Uint8ClampedArray(imageData.data.length);
-    for (let i = 0; i < imageData.data.length; i += 4) {
-        const avg = (imageData.data[i] + imageData.data[i + 1] + imageData.data[i + 2]) / 3;
-        grayscaleData[i] = grayscaleData[i + 1] = grayscaleData[i + 2] = avg;
-        grayscaleData[i + 3] = imageData.data[i + 3];
-    }
-    context.putImageData(new ImageData(grayscaleData, canvas.width, canvas.height), 0, 0);
-
     // Convert the canvas image to a data URL
     const imageDataUrl = canvas.toDataURL('image/png');
 
-    // Use Tesseract.js to recognize text from the image
+    // Use Tesseract.js to recognize text from the image with a pre-trained model
     Tesseract.recognize(
         imageDataUrl,
-        'eng', // You can also try 'osd' or 'jpn' models if applicable
+        'osd',  // You can try other languages like 'eng', 'jpn', etc.
         {
             logger: m => console.log(`${m.status} ${m.progress}`)
         }
